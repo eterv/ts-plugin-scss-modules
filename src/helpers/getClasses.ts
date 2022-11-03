@@ -1,8 +1,6 @@
 import path from 'path';
 import Processor from 'postcss/lib/processor';
-import less from 'less';
 import sass from 'sass';
-import stylus from 'stylus';
 import { CSSExports, extractICSS } from 'icss-utils';
 import tsModule from 'typescript/lib/tsserverlibrary';
 import { createMatchPath } from 'tsconfig-paths';
@@ -13,17 +11,13 @@ import { pathToFileURL } from 'url';
 
 export const enum FileType {
   css = 'css',
-  less = 'less',
   sass = 'sass',
   scss = 'scss',
-  styl = 'styl',
 }
 
 export const getFileType = (fileName: string): FileType => {
   if (fileName.endsWith('.css')) return FileType.css;
-  if (fileName.endsWith('.less')) return FileType.less;
   if (fileName.endsWith('.sass')) return FileType.sass;
-  if (fileName.endsWith('.styl')) return FileType.styl;
   return FileType.scss;
 };
 
@@ -58,19 +52,6 @@ export const getClasses = ({
         logger,
         compilerOptions,
       });
-    } else if (fileType === FileType.less) {
-      less.render(
-        css,
-        {
-          syncImport: true,
-          filename: fileName,
-          ...(rendererOptions.less || {}),
-        } as Less.Options,
-        (error, output) => {
-          if (error || output === undefined) throw error;
-          transformedCss = output.css.toString();
-        },
-      );
     } else if (fileType === FileType.scss || fileType === FileType.sass) {
       const filePath = getFilePath(fileName);
       const { loadPaths, ...sassOptions } = rendererOptions.sass || {};
@@ -97,11 +78,6 @@ export const getClasses = ({
           ...sassOptions,
         })
         .css.toString();
-    } else if (fileType === FileType.styl) {
-      transformedCss = stylus(css, {
-        ...(rendererOptions.stylus || {}),
-        filename: fileName,
-      }).render();
     } else {
       transformedCss = css;
     }
