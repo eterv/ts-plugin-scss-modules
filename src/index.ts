@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import dotenv from 'dotenv';
 import postcss, { AcceptedPlugin } from 'postcss';
 import postcssIcssSelectors from 'postcss-icss-selectors';
 import postcssIcssKeyframes from 'postcss-icss-keyframes';
@@ -36,17 +35,6 @@ function init({ typescript: ts }: { typescript: typeof tsModule }) {
     // User options for plugin.
     const options: Options = info.config.options || {};
     logger.log(`options: ${JSON.stringify(options)}`);
-
-    // Load environment variables like SASS_PATH.
-    // TODO: Add tests for this option.
-    const dotenvOptions = options.dotenvOptions || {};
-    if (dotenvOptions) {
-      dotenvOptions.path = path.resolve(
-        directory,
-        dotenvOptions.path || '.env',
-      );
-    }
-    dotenv.config(dotenvOptions);
 
     // Normalise SASS_PATH array to absolute paths.
     if (process.env.SASS_PATH) {
@@ -97,6 +85,8 @@ function init({ typescript: ts }: { typescript: typeof tsModule }) {
     if (options.customTemplate) {
       options.customTemplate = path.resolve(directory, options.customTemplate);
     }
+
+    if (options.goToDefinition == null) options.goToDefinition = true;
 
     // Create PostCSS processor.
     const processor = postcss([

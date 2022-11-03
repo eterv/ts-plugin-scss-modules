@@ -1,6 +1,5 @@
 import { Options as SassOptions } from 'sass';
 import tsModule from 'typescript/lib/tsserverlibrary';
-import { DotenvConfigOptions } from 'dotenv/types';
 import { CSSExports } from 'icss-utils';
 import { Logger } from './helpers/logger';
 
@@ -18,7 +17,6 @@ export interface Options {
   customMatcher?: string;
   customRenderer?: string;
   customTemplate?: string;
-  dotenvOptions?: DotenvConfigOptions;
   goToDefinition?: boolean;
   namedExports?: boolean;
   postcssOptions?: PostcssOptions;

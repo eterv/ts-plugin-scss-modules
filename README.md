@@ -95,7 +95,6 @@ Please note that no options are required. However, depending on your configurati
 | `customRenderer`     | `false`                            | See [`customRenderer`](#customRenderer) below.                               |
 | `customTemplate`     | `false`                            | See [`customTemplate`](#customTemplate) below.                               |
 | `namedExports`       | `true`                             | Enables named exports for compatible classnames.                             |
-| `dotenvOptions`      | `{}`                               | Provides options for [`dotenv`](https://github.com/motdotla/dotenv#options). |
 | `postcssOptions`     | `{}`                               | See [`postcssOptions`](#postcssOptions) below.                               |
 | `rendererOptions`    | `{}`                               | See [`rendererOptions`](#rendererOptions) below.                             |
 
@@ -109,7 +108,6 @@ Please note that no options are required. However, depending on your configurati
           "classnameTransform": "dashes",
           "customMatcher": "\\.m\\.css$",
           "customRenderer": "./myRenderer.js",
-          "dotenvOptions": {},
           "postcssOptions": {},
           "rendererOptions": {}
         }
