@@ -2,6 +2,7 @@ import path from 'path';
 import Processor from 'postcss/lib/processor';
 import sass from 'sass';
 import { CSSExports, extractICSS } from 'icss-utils';
+import { RawSourceMap } from 'source-map-js';
 import tsModule from 'typescript/lib/tsserverlibrary';
 import { createMatchPath } from 'tsconfig-paths';
 import { sassTildeImporter } from '../importers/sassTildeImporter';
@@ -23,7 +24,13 @@ export const getFileType = (fileName: string): FileType => {
 
 const getFilePath = (fileName: string) => path.dirname(fileName);
 
-export const getClasses = ({
+export interface CSSExportsWithSourceMap {
+  classes: CSSExports;
+  css?: string;
+  sourceMap?: RawSourceMap;
+}
+
+export const getCssExports = ({
   css,
   fileName,
   logger,
@@ -37,12 +44,13 @@ export const getClasses = ({
   options: Options;
   processor: Processor;
   compilerOptions: tsModule.CompilerOptions;
-}): CSSExports => {
+}): CSSExportsWithSourceMap => {
   try {
     const fileType = getFileType(fileName);
     const rendererOptions = options.rendererOptions || {};
 
     let transformedCss = '';
+    let sourceMap: string | undefined;
 
     if (options.customRenderer) {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -52,7 +60,7 @@ export const getClasses = ({
         logger,
         compilerOptions,
       });
-    } else if (fileType === FileType.scss || fileType === FileType.sass) {
+    } else if (fileType === FileType.sass || fileType === FileType.scss) {
       const filePath = getFilePath(fileName);
       const { loadPaths, ...sassOptions } = rendererOptions.sass || {};
       const { baseUrl, paths } = compilerOptions;
@@ -63,7 +71,10 @@ export const getClasses = ({
         findFileUrl(url) {
           const newUrl =
             matchPath !== null
-              ? matchPath(url, undefined, undefined, [`.${FileType.scss}`])
+              ? matchPath(url, undefined, undefined, [
+                  `.${FileType.sass}`,
+                  `.${FileType.scss}`,
+                ])
               : undefined;
           return newUrl ? pathToFileURL(newUrl) : null;
         },
@@ -71,24 +82,36 @@ export const getClasses = ({
 
       const importers = [aliasImporter, sassTildeImporter];
 
-      transformedCss = sass
-        .compile(fileName, {
-          loadPaths: [filePath, 'node_modules', ...(loadPaths || [])],
-          importers,
-          ...sassOptions,
-        })
-        .css.toString();
+      const result = sass.compile(fileName, {
+        loadPaths: [filePath, 'node_modules', ...(loadPaths || [])],
+        importers,
+        sourceMap: true,
+        ...sassOptions,
+      });
+
+      transformedCss = result.css.toString();
+      sourceMap = JSON.stringify(result.sourceMap);
     } else {
       transformedCss = css;
     }
 
     const processedCss = processor.process(transformedCss, {
       from: fileName,
+      map: {
+        inline: false,
+        prev: sourceMap,
+      },
     });
 
-    return processedCss.root ? extractICSS(processedCss.root).icssExports : {};
+    return {
+      classes: processedCss.root
+        ? extractICSS(processedCss.root).icssExports
+        : {},
+      css: processedCss.css,
+      sourceMap: processedCss.map.toJSON(),
+    };
   } catch (e: any) {
     logger.error(e);
-    return {};
+    return { classes: {} };
   }
 };

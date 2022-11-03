@@ -1,14 +1,11 @@
 import { readFileSync } from 'fs';
-import { CSSExports } from 'icss-utils';
 import { join } from 'path';
-import postcss from 'postcss';
-import postcssIcssSelectors from 'postcss-icss-selectors';
 import postcssImportSync from 'postcss-import-sync2';
-import postcssIcssKeyframes from 'postcss-icss-keyframes';
 import tsModule from 'typescript/lib/tsserverlibrary';
-import { getClasses } from '../getClasses';
-import { createExports } from '../createExports';
+import { CSSExportsWithSourceMap, getCssExports } from '../getCssExports';
+import { createDtsExports } from '../createDtsExports';
 import { Logger } from '../logger';
+import { getProcessor } from '../getProcessor';
 import { Options } from '../../options';
 
 const testFileNames = [
@@ -29,20 +26,19 @@ const options: Options = {};
 
 const compilerOptions: tsModule.CompilerOptions = {};
 
-const processor = postcss([
+const processor = getProcessor([
+  // For testing PostCSS import support/functionality.
   postcssImportSync(),
-  postcssIcssSelectors({ mode: 'local' }),
-  postcssIcssKeyframes(),
 ]);
 
 describe('utils / cssSnapshots', () => {
   testFileNames.forEach((testFile) => {
-    let classes: CSSExports;
+    let cssExports: CSSExportsWithSourceMap;
     const fileName = join(__dirname, 'fixtures', testFile);
     const css = readFileSync(fileName, 'utf8');
 
     beforeAll(() => {
-      classes = getClasses({
+      cssExports = getCssExports({
         css,
         fileName,
         logger,
@@ -53,21 +49,21 @@ describe('utils / cssSnapshots', () => {
     });
 
     describe(`with file '${testFile}'`, () => {
-      describe('getClasses', () => {
+      describe('getCssExports', () => {
         it('should return an object matching expected CSS', () => {
-          expect(classes).toMatchSnapshot();
+          expect(getCssExports).toMatchSnapshot();
         });
       });
 
       describe('createExports', () => {
         it('should create an exports file', () => {
-          const exports = createExports({
-            classes,
+          const dts = createDtsExports({
+            cssExports,
             fileName,
             logger,
             options: {},
           });
-          expect(exports).toMatchSnapshot();
+          expect(dts).toMatchSnapshot();
         });
       });
 
@@ -81,8 +77,8 @@ describe('utils / cssSnapshots', () => {
 
           const options: Options = { customTemplate };
 
-          const dts = createExports({
-            classes,
+          const dts = createDtsExports({
+            cssExports,
             fileName,
             logger,
             options,
@@ -98,7 +94,7 @@ describe('utils / cssSnapshots', () => {
     const css = readFileSync(fileName, 'utf8');
 
     it('should find external files', () => {
-      const classes = getClasses({
+      const cssExports = getCssExports({
         css,
         fileName,
         logger,
@@ -107,7 +103,7 @@ describe('utils / cssSnapshots', () => {
         compilerOptions,
       });
 
-      expect(classes.test).toMatchSnapshot();
+      expect(cssExports.classes.test).toMatchSnapshot();
     });
   });
 
@@ -119,7 +115,7 @@ describe('utils / cssSnapshots', () => {
     const options: Options = { customRenderer };
 
     it('should process a file and log', () => {
-      const classes = getClasses({
+      const cssExports = getCssExports({
         css,
         fileName,
         logger,
@@ -128,12 +124,12 @@ describe('utils / cssSnapshots', () => {
         compilerOptions,
       });
 
-      expect(classes).toMatchSnapshot();
+      expect(cssExports.classes).toMatchSnapshot();
       expect(logger.log).toHaveBeenCalledWith('Example log');
     });
   });
 
-  describe('with includePaths in sass options', () => {
+  describe('with loadPaths in sass options', () => {
     const fileName = join(__dirname, 'fixtures', 'include-path.module.scss');
     const css = readFileSync(fileName, 'utf8');
 
@@ -143,8 +139,8 @@ describe('utils / cssSnapshots', () => {
       },
     };
 
-    it('should find external file from includePaths', () => {
-      const classes = getClasses({
+    it('should find external file from loadPaths', () => {
+      const cssExports = getCssExports({
         css,
         fileName,
         logger,
@@ -153,7 +149,7 @@ describe('utils / cssSnapshots', () => {
         compilerOptions,
       });
 
-      expect(classes).toMatchSnapshot();
+      expect(cssExports.classes).toMatchSnapshot();
     });
   });
 
@@ -169,7 +165,7 @@ describe('utils / cssSnapshots', () => {
     };
 
     it('sass should find the files', () => {
-      const classes = getClasses({
+      const cssExports = getCssExports({
         css,
         fileName,
         logger,
@@ -178,7 +174,39 @@ describe('utils / cssSnapshots', () => {
         compilerOptions,
       });
 
-      expect(classes).toMatchSnapshot();
+      expect(cssExports.classes).toMatchSnapshot();
+    });
+  });
+
+  describe('with goToDefinition enabled', () => {
+    const fileName = join(__dirname, 'fixtures', 'test.module.scss');
+    const css = readFileSync(fileName, 'utf8');
+    const options: Options = {
+      classnameTransform: 'camelCaseOnly',
+      goToDefinition: true,
+    };
+
+    const cssExports = getCssExports({
+      css,
+      fileName,
+      logger,
+      options,
+      processor,
+      compilerOptions,
+    });
+
+    it('should return an object with classes, css, and a source map', () => {
+      expect(cssExports).toMatchSnapshot();
+    });
+
+    it.only('should return a line-accurate dts file', () => {
+      const dts = createDtsExports({
+        cssExports,
+        fileName,
+        logger,
+        options,
+      });
+      expect(dts).toMatchSnapshot();
     });
   });
 });
