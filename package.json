@@ -1,14 +1,14 @@
 {
-  "name": "typescript-plugin-scss-modules",
+  "name": "ts-plugin-scss-modules",
   "version": "0.1.0",
   "main": "lib/index.js",
   "author": "Lucas Choi <haru@haru.com>",
   "license": "MIT",
   "description": "CSS/SCSS modules support for TypeScript",
-  "homepage": "https://github.com/eterv/typescript-plugin-scss-modules",
+  "homepage": "https://github.com/eterv/ts-plugin-scss-modules",
   "repository": {
     "type": "git",
-    "url": "https://github.com/eterv/typescript-plugin-scss-modules"
+    "url": "https://github.com/eterv/ts-plugin-scss-modules"
   },
   "keywords": [
     "css",
@@ -17,6 +17,7 @@
     "modules",
     "plugin",
     "postcss",
+    "ts",
     "typescript"
   ],
   "files": [
@@ -35,7 +36,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "pre-push": "yarn test"
+      "pre-push": "pnpm test"
     }
   },
   "jest": {
@@ -61,13 +62,6 @@
     "./**/*.{json,md,yml}": [
       "prettier --write"
     ]
-  },
-  "prettier": {
-    "singleQuote": true,
-    "trailingComma": "all"
-  },
-  "resolutions": {
-    "postcss": "8.3.0"
   },
   "dependencies": {
     "dotenv": "^10.0.0",
@@ -108,5 +102,12 @@
   },
   "peerDependencies": {
     "typescript": ">=3.0.0"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all"
+  },
+  "resolutions": {
+    "postcss": "8.3.0"
   }
 }

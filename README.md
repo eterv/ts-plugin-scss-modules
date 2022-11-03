@@ -1,17 +1,17 @@
-# typescript-plugin-scss-modules
+# ts-plugin-scss-modules
 
-[![npm](https://img.shields.io/npm/v/typescript-plugin-scss-modules)](https://www.npmjs.com/package/typescript-plugin-scss-modules)
-[![npm](https://img.shields.io/npm/dw/typescript-plugin-scss-modules)](https://www.npmjs.com/package/typescript-plugin-scss-modules)
-[![license](https://img.shields.io/npm/l/typescript-plugin-scss-modules)](https://github.com/eterv/typescript-plugin-scss-modules/blob/main/LICENSE)
+[![npm](https://img.shields.io/npm/v/ts-plugin-scss-modules)](https://www.npmjs.com/package/ts-plugin-scss-modules)
+[![npm](https://img.shields.io/npm/dw/ts-plugin-scss-modules)](https://www.npmjs.com/package/ts-plugin-scss-modules)
+[![license](https://img.shields.io/npm/l/ts-plugin-scss-modules)](https://github.com/eterv/ts-plugin-scss-modules/blob/main/LICENSE)
 
 A [TypeScript language service plugin](https://github.com/Microsoft/TypeScript/wiki/Writing-a-Language-Service-Plugin)
 for [CSS Modules](https://github.com/css-modules/css-modules) and SASS/SCSS Modules.
 
-<img src="https://raw.githubusercontent.com/eterv/typescript-plugin-scss-modules/main/.github/images/example.gif" alt="typescript-plugin-scss-modules example" />
+<img src="https://raw.githubusercontent.com/eterv/ts-plugin-scss-modules/main/.github/images/example.gif" alt="ts-plugin-scss-modules example" />
 
 ## Table of contents
 
-- [typescript-plugin-scss-modules](#typescript-plugin-scss-modules)
+- [ts-plugin-scss-modules](#ts-plugin-scss-modules)
   - [Table of contents](#table-of-contents)
   - [About this plugin](#about-this-plugin)
   - [Installation](#installation)
@@ -50,13 +50,13 @@ If you need a different solution, these projects might help:
 To install with Yarn:
 
 ```sh
-yarn add -D typescript-plugin-scss-modules
+yarn add -D ts-plugin-scss-modules
 ```
 
 To install with npm:
 
 ```sh
-npm install -D typescript-plugin-scss-modules
+npm install -D ts-plugin-scss-modules
 ```
 
 Once installed, add this plugin to your `tsconfig.json`:
@@ -64,7 +64,7 @@ Once installed, add this plugin to your `tsconfig.json`:
 ```json
 {
   "compilerOptions": {
-    "plugins": [{ "name": "typescript-plugin-scss-modules" }]
+    "plugins": [{ "name": "ts-plugin-scss-modules" }]
   }
 }
 ```
@@ -104,7 +104,7 @@ Please note that no options are required. However, depending on your configurati
   "compilerOptions": {
     "plugins": [
       {
-        "name": "typescript-plugin-scss-modules",
+        "name": "ts-plugin-scss-modules",
         "options": {
           "classnameTransform": "dashes",
           "customMatcher": "\\.m\\.css$",
@@ -133,7 +133,7 @@ When a custom renderer is provided, not other renderers will be used.
 
 The path to the `customRenderer` must be relative to the project root (i.e. `./myRenderer.js`).
 
-The custom renderer itself should be a JavaScript file. The function will be called with three arguments: a `css` string, an `options` object (see [`options.ts`](https://github.com/eterv/typescript-plugin-scss-modules/blob/main/src/options.ts#L16-L27)), and a `compilerOptions` object - which contains options as set in your `tsconfig.json`. It must be synchronous, and must return valid CSS.
+The custom renderer itself should be a JavaScript file. The function will be called with three arguments: a `css` string, an `options` object (see [`options.ts`](https://github.com/eterv/ts-plugin-scss-modules/blob/main/src/options.ts#L16-L27)), and a `compilerOptions` object - which contains options as set in your `tsconfig.json`. It must be synchronous, and must return valid CSS.
 
 ```js
 module.exports = (css, { fileName, logger }) => {
@@ -146,9 +146,9 @@ module.exports = (css, { fileName, logger }) => {
 };
 ```
 
-You can find an example custom renderer in our test fixtures ([`customRenderer.js`](https://github.com/eterv/typescript-plugin-scss-modules/blob/main/src/helpers/__tests__/fixtures/customRenderer.js)).
+You can find an example custom renderer in our test fixtures ([`customRenderer.js`](https://github.com/eterv/ts-plugin-scss-modules/blob/main/src/helpers/__tests__/fixtures/customRenderer.js)).
 
-The [internal `logger`](https://github.com/eterv/typescript-plugin-scss-modules/blob/main/src/helpers/logger.ts) is provided for [debugging](#troubleshooting).
+The [internal `logger`](https://github.com/eterv/ts-plugin-scss-modules/blob/main/src/helpers/logger.ts) is provided for [debugging](#troubleshooting).
 
 > If you use Webpack, note that tilde (`~`) imports not supported by Sass natively.
 >
@@ -162,7 +162,7 @@ When a custom template is provided, its output is used as the virtual declaratio
 
 The path to the `customTemplate` must be relative to the project root (i.e. `./customTemplate.js`).
 
-The custom renderer itself should be a JavaScript file. The function will be called with two arguments: a `dts` string, and an `options` object (see [`options.ts`](https://github.com/eterv/typescript-plugin-scss-modules/blob/main/src/options.ts#L16-L27)). It must be synchronous, and must return a valid TypeScript declaration (as found in a `.d.ts` file).
+The custom renderer itself should be a JavaScript file. The function will be called with two arguments: a `dts` string, and an `options` object (see [`options.ts`](https://github.com/eterv/ts-plugin-scss-modules/blob/main/src/options.ts#L16-L27)). It must be synchronous, and must return a valid TypeScript declaration (as found in a `.d.ts` file).
 
 ```js
 module.exports = (dts, { classes, fileName, logger }) => {
@@ -175,9 +175,9 @@ module.exports = (dts, { classes, fileName, logger }) => {
 };
 ```
 
-You can find an example custom template in our test fixtures ([`customTemplate.js`](https://github.com/eterv/typescript-plugin-scss-modules/blob/main/src/helpers/__tests__/fixtures/customTemplate.js)).
+You can find an example custom template in our test fixtures ([`customTemplate.js`](https://github.com/eterv/ts-plugin-scss-modules/blob/main/src/helpers/__tests__/fixtures/customTemplate.js)).
 
-The [internal `logger`](https://github.com/eterv/typescript-plugin-scss-modules/blob/main/src/helpers/logger.ts) is provided for [debugging](#troubleshooting).
+The [internal `logger`](https://github.com/eterv/ts-plugin-scss-modules/blob/main/src/helpers/logger.ts) is provided for [debugging](#troubleshooting).
 
 The `classes` object represents all the classnames extracted from the CSS Module. They are available if you want to add a custom representation of the CSS classes.
 
@@ -210,7 +210,7 @@ If you aren't using any [plugin options](#options), you can simple add this plug
 
 ```json
 {
-  "typescript.tsserver.pluginPaths": ["typescript-plugin-scss-modules"]
+  "typescript.tsserver.pluginPaths": ["ts-plugin-scss-modules"]
 }
 ```
 

@@ -6,7 +6,7 @@ export interface Logger {
 export const createLogger = (info: ts.server.PluginCreateInfo): Logger => {
   const log = (message: string) => {
     info.project.projectService.logger.info(
-      `[typescript-plugin-scss-modules] ${message}`,
+      `[ts-plugin-scss-modules] ${message}`,
     );
   };
   const error = (error: Error) => {
