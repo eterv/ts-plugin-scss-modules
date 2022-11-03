@@ -1,0 +1,36 @@
+.classA {
+  color: rebeccapurple;
+}
+
+.ClassB {
+  color: rebeccapurple;
+}
+
+.class-c {
+  color: rebeccapurple;
+}
+
+.class_d {
+  @mixin postcss-mixin;
+  color: rebeccapurple;
+}
+
+.parent {
+  .childA {
+    color: rebeccapurple;
+  }
+  .childB {
+    .nestedChild {
+      color: rebeccapurple;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
