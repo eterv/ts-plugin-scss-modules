@@ -1,19 +1,19 @@
-# typescript-plugin-css-modules
+# typescript-plugin-scss-modules
 
-[![npm](https://img.shields.io/npm/v/typescript-plugin-css-modules)](https://www.npmjs.com/package/typescript-plugin-css-modules)
-[![npm](https://img.shields.io/npm/dw/typescript-plugin-css-modules)](https://www.npmjs.com/package/typescript-plugin-css-modules)
-[![license](https://img.shields.io/npm/l/typescript-plugin-css-modules)](https://github.com/mrmckeb/typescript-plugin-css-modules/blob/develop/LICENSE)
+[![npm](https://img.shields.io/npm/v/typescript-plugin-scss-modules)](https://www.npmjs.com/package/typescript-plugin-scss-modules)
+[![npm](https://img.shields.io/npm/dw/typescript-plugin-scss-modules)](https://www.npmjs.com/package/typescript-plugin-scss-modules)
+[![license](https://img.shields.io/npm/l/typescript-plugin-scss-modules)](https://github.com/eterv/typescript-plugin-scss-modules/blob/main/LICENSE)
 
 A [TypeScript language service plugin](https://github.com/Microsoft/TypeScript/wiki/Writing-a-Language-Service-Plugin)
-for [CSS Modules](https://github.com/css-modules/css-modules).
+for [CSS Modules](https://github.com/css-modules/css-modules) and SASS/SCSS Modules.
 
-<img src="https://raw.githubusercontent.com/mrmckeb/typescript-plugin-css-modules/main/.github/images/example.gif" alt="typescript-plugin-css-modules example" />
+<img src="https://raw.githubusercontent.com/eterv/typescript-plugin-scss-modules/main/.github/images/example.gif" alt="typescript-plugin-scss-modules example" />
 
 ## Table of contents
 
-- [typescript-plugin-css-modules](#typescript-plugin-css-modules)
-  - [Table of contents](#about-this-plugin)
-  - [About this plugin](#table-of-contents)
+- [typescript-plugin-scss-modules](#typescript-plugin-scss-modules)
+  - [Table of contents](#table-of-contents)
+  - [About this plugin](#about-this-plugin)
   - [Installation](#installation)
     - [Importing CSS](#importing-css)
     - [Options](#options)
@@ -50,13 +50,13 @@ If you need a different solution, these projects might help:
 To install with Yarn:
 
 ```sh
-yarn add -D typescript-plugin-css-modules
+yarn add -D typescript-plugin-scss-modules
 ```
 
 To install with npm:
 
 ```sh
-npm install -D typescript-plugin-css-modules
+npm install -D typescript-plugin-scss-modules
 ```
 
 Once installed, add this plugin to your `tsconfig.json`:
@@ -64,7 +64,7 @@ Once installed, add this plugin to your `tsconfig.json`:
 ```json
 {
   "compilerOptions": {
-    "plugins": [{ "name": "typescript-plugin-css-modules" }]
+    "plugins": [{ "name": "typescript-plugin-scss-modules" }]
   }
 }
 ```
@@ -84,15 +84,6 @@ const a = styles.myClass;
 const b = styles['my_other-class'];
 ```
 
-As of version 1.1.0, you can also use named exports for classes that don't contain hyphens or underscores. You can still access other classes via the default export.
-
-```tsx
-import styles, { myClass } from 'my.module.css';
-
-const a = myClass;
-const b = styles['my_other-class'];
-```
-
 ### Options
 
 Please note that no options are required. However, depending on your configuration, you may need to customise these options.
@@ -100,7 +91,7 @@ Please note that no options are required. However, depending on your configurati
 | Option               | Default value                      | Description                                                                  |
 | -------------------- | ---------------------------------- | ---------------------------------------------------------------------------- |
 | `classnameTransform` | `asIs`                             | See [`classnameTransform`](#classnameTransform) below.                       |
-| `customMatcher`      | `"\\.module\\.(c\|le\|sa\|sc)ss$"` | Changes the file extensions that this plugin processes.                      |
+| `customMatcher`      | `"\\.module\\.(c\|sa\|sc)ss$"` | Changes the file extensions that this plugin processes.                      |
 | `customRenderer`     | `false`                            | See [`customRenderer`](#customRenderer) below.                               |
 | `customTemplate`     | `false`                            | See [`customTemplate`](#customTemplate) below.                               |
 | `namedExports`       | `true`                             | Enables named exports for compatible classnames.                             |
@@ -113,7 +104,7 @@ Please note that no options are required. However, depending on your configurati
   "compilerOptions": {
     "plugins": [
       {
-        "name": "typescript-plugin-css-modules",
+        "name": "typescript-plugin-scss-modules",
         "options": {
           "classnameTransform": "dashes",
           "customMatcher": "\\.m\\.css$",
@@ -142,7 +133,7 @@ When a custom renderer is provided, not other renderers will be used.
 
 The path to the `customRenderer` must be relative to the project root (i.e. `./myRenderer.js`).
 
-The custom renderer itself should be a JavaScript file. The function will be called with three arguments: a `css` string, an `options` object (see [`options.ts`](https://github.com/mrmckeb/typescript-plugin-css-modules/blob/main/src/options.ts#L33-L41)), and a `compilerOptions` object - which contains options as set in your `tsconfig.json`. It must be synchronous, and must return valid CSS.
+The custom renderer itself should be a JavaScript file. The function will be called with three arguments: a `css` string, an `options` object (see [`options.ts`](https://github.com/eterv/typescript-plugin-scss-modules/blob/main/src/options.ts#L16-L27)), and a `compilerOptions` object - which contains options as set in your `tsconfig.json`. It must be synchronous, and must return valid CSS.
 
 ```js
 module.exports = (css, { fileName, logger }) => {
@@ -155,15 +146,13 @@ module.exports = (css, { fileName, logger }) => {
 };
 ```
 
-You can find an example custom renderer in our test fixtures ([`customRenderer.js`](https://github.com/mrmckeb/typescript-plugin-css-modules/blob/main/src/helpers/__tests__/fixtures/customRenderer.js)).
+You can find an example custom renderer in our test fixtures ([`customRenderer.js`](https://github.com/eterv/typescript-plugin-scss-modules/blob/main/src/helpers/__tests__/fixtures/customRenderer.js)).
 
-The [internal `logger`](https://github.com/mrmckeb/typescript-plugin-css-modules/blob/main/src/helpers/logger.ts) is provided for [debugging](#troubleshooting).
+The [internal `logger`](https://github.com/eterv/typescript-plugin-scss-modules/blob/main/src/helpers/logger.ts) is provided for [debugging](#troubleshooting).
 
-> If you use Webpack, note that tilde (`~`) imports not supported by Less and Sass natively.
+> If you use Webpack, note that tilde (`~`) imports not supported by Sass natively.
 >
-> For Sass users: A custom importer has been implemented to resolve this as of v3.
->
-> For Less users: This package exports a customRenderer that enables tilde imports: [`less-plugin-aliases`](https://github.com/dancon/less-plugin-aliases).
+> A custom importer has been implemented to resolve this as of v3.
 
 #### `customTemplate`
 
@@ -173,7 +162,7 @@ When a custom template is provided, its output is used as the virtual declaratio
 
 The path to the `customTemplate` must be relative to the project root (i.e. `./customTemplate.js`).
 
-The custom renderer itself should be a JavaScript file. The function will be called with two arguments: a `dts` string, and an `options` object (see [`options.ts`](https://github.com/mrmckeb/typescript-plugin-css-modules/blob/main/src/options.ts#L43-L52)). It must be synchronous, and must return a valid TypeScript declaration (as found in a `.d.ts` file).
+The custom renderer itself should be a JavaScript file. The function will be called with two arguments: a `dts` string, and an `options` object (see [`options.ts`](https://github.com/eterv/typescript-plugin-scss-modules/blob/main/src/options.ts#L16-L27)). It must be synchronous, and must return a valid TypeScript declaration (as found in a `.d.ts` file).
 
 ```js
 module.exports = (dts, { classes, fileName, logger }) => {
@@ -186,9 +175,9 @@ module.exports = (dts, { classes, fileName, logger }) => {
 };
 ```
 
-You can find an example custom template in our test fixtures ([`customTemplate.js`](https://github.com/mrmckeb/typescript-plugin-css-modules/blob/main/src/helpers/__tests__/fixtures/customTemplate.js)).
+You can find an example custom template in our test fixtures ([`customTemplate.js`](https://github.com/eterv/typescript-plugin-scss-modules/blob/main/src/helpers/__tests__/fixtures/customTemplate.js)).
 
-The [internal `logger`](https://github.com/mrmckeb/typescript-plugin-css-modules/blob/main/src/helpers/logger.ts) is provided for [debugging](#troubleshooting).
+The [internal `logger`](https://github.com/eterv/typescript-plugin-scss-modules/blob/main/src/helpers/logger.ts) is provided for [debugging](#troubleshooting).
 
 The `classes` object represents all the classnames extracted from the CSS Module. They are available if you want to add a custom representation of the CSS classes.
 
@@ -203,11 +192,9 @@ The `classes` object represents all the classnames extracted from the CSS Module
 
 | Option   | Default value | Description                                                                          |
 | -------- | ------------- | ------------------------------------------------------------------------------------ |
-| `less`   | `{}`          | Set [renderer options for Less](http://lesscss.org/usage/#less-options).             |
 | `sass`   | `{}`          | Set [renderer options for Sass](https://sass-lang.com/documentation/js-api#options). |
-| `stylus` | `{}`          | Set [renderer options for Stylus](https://stylus.bootcss.com/docs/js.html).          |
 
-> For convenience, `includePaths` for Sass are extended, not replaced. The defaults are the path of the current file, and `'node_modules'`.
+> For convenience, `loadPaths` for Sass are extended, not replaced. The defaults are the path of the current file, and `'node_modules'`.
 
 ### Visual Studio Code
 
@@ -223,7 +210,7 @@ If you aren't using any [plugin options](#options), you can simple add this plug
 
 ```json
 {
-  "typescript.tsserver.pluginPaths": ["typescript-plugin-css-modules"]
+  "typescript.tsserver.pluginPaths": ["typescript-plugin-scss-modules"]
 }
 ```
 
@@ -252,16 +239,6 @@ declare module '*.module.sass' {
   const classes: { [key: string]: string };
   export default classes;
 }
-
-declare module '*.module.less' {
-  const classes: { [key: string]: string };
-  export default classes;
-}
-
-declare module '*.module.styl' {
-  const classes: { [key: string]: string };
-  export default classes;
-}
 ```
 
 ## Troubleshooting
@@ -274,5 +251,4 @@ You can include these logs with any issues you open for this project.
 
 ## About this project
 
-This project was inspired by a Create React App [issue](https://github.com/facebook/create-react-app/issues/5677)
-and built on prior work from [`css-module-types`](https://github.com/timothykang/css-module-types).
+This project was inspired by [`typescript-plugin-css-modules`](https://github.com/mrmckeb/typescript-plugin-css-modules).
