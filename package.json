@@ -2,20 +2,18 @@
   "name": "typescript-plugin-scss-modules",
   "version": "0.1.0",
   "main": "lib/index.js",
-  "author": "Brody McKee <mrmckeb@hotmail.com>",
+  "author": "Lucas Choi <haru@haru.com>",
   "license": "MIT",
-  "description": "CSS modules support for TypeScript",
-  "homepage": "https://github.com/mrmckeb/typescript-plugin-css-modules",
+  "description": "CSS/SCSS modules support for TypeScript",
+  "homepage": "https://github.com/eterv/typescript-plugin-scss-modules",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mrmckeb/typescript-plugin-css-modules"
+    "url": "https://github.com/eterv/typescript-plugin-scss-modules"
   },
   "keywords": [
     "css",
     "scss",
     "sass",
-    "less",
-    "stylus",
     "modules",
     "plugin",
     "postcss",
@@ -25,9 +23,13 @@
     "lib"
   ],
   "scripts": {
-    "build": "rm -rf ./lib && tsc",
-    "lint": "eslint --max-warnings 0 . && yarn prettier -c .",
-    "prepublishOnly": "yarn build",
+    "b": "pnpm build",
+    "b2": "pnpm build:clean",
+    "build": "tsc",
+    "build:clean": "pnpm clean && pnpm build",
+    "clean": "rm -rf ./lib",
+    "lint": "eslint --max-warnings 0 . && pnpm prettier -c .",
+    "prepublishOnly": "pnpm build",
     "test": "jest ./src"
   },
   "husky": {
