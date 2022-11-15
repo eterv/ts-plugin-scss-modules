@@ -58,7 +58,7 @@ export default classes;
     const cssLines = cssExports.css?.split('\n') || [];
 
     // Create new equal size array of empty strings.
-    const dtsLines = Array.from(Array(cssLines.length), () => '');
+    const dtsLines = Array.from(Array(cssLines.length), () => [] as string[]);
 
     const processedClasses = Object.entries(classes)
       .map(([className, hashedClassName]) =>
@@ -83,11 +83,20 @@ export default classes;
         line: matchedLine >= 0 ? matchedLine + 1 : 1,
         column: matchedColumn >= 0 ? matchedColumn : 0,
       });
-      dtsLines[lineNumber ? lineNumber - 1 : 0] =
-        classNameToNamedExport(className);
+
+      const index = lineNumber ? lineNumber - 1 : 0;
+
+      const prev = dtsLines[index];
+      dtsLines[index] = prev == null ? [className] : [...prev, className];
     });
 
-    dts = dtsLines.join('\n');
+    dts = dtsLines
+      .map((classNames) => {
+        return classNames.reduce((prev, className) => {
+          return `${prev}${classNameToNamedExport(className)}`;
+        }, '');
+      })
+      .join('\n');
   }
 
   if (options.customTemplate) {
